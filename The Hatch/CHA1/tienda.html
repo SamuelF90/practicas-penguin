@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>LA ESCOTILLA - TIENDA</title>
+    <style>
+        body { background: radial-gradient(circle at center, #1a3a5f 0%, #001524 100%) no-repeat center center fixed; color: #e0f7fa; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        h1 { color:#00d2ff; text-shadow: 0 0 15px #00d2ff; text-align: center; margin-bottom: 20px; }
+        
+        .grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; max-width: 1400px; margin: auto; }
+        .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; border: 1px solid rgba(0, 210, 255, 0.3); text-align: center; width: 210px; }
+        
+        .img-container { width: 100%; height: 100px; background: rgba(0, 21, 36, 0.5); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 10px 0; overflow: hidden; border: 1px solid rgba(0, 210, 255, 0.2); }
+        .img-p { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        input[type="number"] { background: rgba(0, 21, 36, 0.6); color: #fff; border: 1px solid #00d2ff; border-radius: 5px; width: 55px; text-align: center; padding: 5px; font-weight: bold; }
+        
+        /* PANEL DE COMPRA MÁS CHICO Y FINO */
+        .footer-pedido { 
+            position: sticky; 
+            bottom: 10px; 
+            background: rgba(0, 21, 36, 0.95); 
+            padding: 15px; 
+            border-radius: 20px; 
+            border: 2px solid #00d2ff; 
+            max-width: 350px; /* Mucho más estrecho */
+            margin: 20px auto; 
+            text-align: center; 
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+        
+        .gran-total { font-size: 1.3em; color: #fff; font-weight: bold; display: block; margin-bottom: 10px; }
+        
+        .input-iglu { 
+            width: 90%; 
+            padding: 8px; 
+            margin-bottom: 10px; 
+            background: rgba(255,255,255,0.1); 
+            color: white; 
+            border: 1px solid #00d2ff; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 0.9em;
+        }
+        
+        .btn-comprar { 
+            width: 100%; 
+            background: #00d2ff; 
+            color: #001524; 
+            padding: 10px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 1em;
+            transition: 0.3s;
+        }
+        .btn-comprar:hover { background: #fff; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <h1>🐧 🧊 LA ESCOTILLA DE LOS PINGÜINOS 🐧</h1>
+    
+    <form action="/comprar" method="POST">
+        <div class="grid">
+            {{range .}}
+            <div class="card">
+                <h3 style="margin:0; font-size: 1em;">{{.Nombre}}</h3>
+                <span style="color: #00d2ff; font-size: 0.8em;">{{.Precio}} $</span>
+                <div class="img-container">
+                    <img src="/imagenes/{{.Nombre}}.JPG" class="img-p" onerror="this.src='https://via.placeholder.com/150/001524/00d2ff?text={{.Nombre}}'">
+                </div>
+                <div style="margin-top: 5px;">
+                    <label style="font-size: 0.7em;">CANT:</label>
+                    <input type="number" name="cant_{{.Nombre}}_{{.Precio}}" value="0" min="0" 
+                           class="cant-in" data-precio="{{.Precio}}" oninput="actualizarGranTotal()">
+                </div>
+            </div>
+            {{end}}
+        </div>
+
+        <div class="footer-pedido">
+            <div class="gran-total">TOTAL: <span id="suma-total">0</span> $</div>
+            <input type="text" name="direccion_iglu" placeholder="📍 Dirección Iglú" required class="input-iglu">
+            <button type="submit" class="btn-comprar">🛒 COMPRAR</button>
+        </div>
+    </form>
+
+    <script>
+        function actualizarGranTotal() {
+            let t = 0;
+            document.querySelectorAll('.cant-in').forEach(i => {
+                t += (parseInt(i.value) || 0) * parseInt(i.getAttribute('data-precio'));
+            });
+            document.getElementById('suma-total').innerText = t;
+        }
+    </script>
+</body>
+</html>

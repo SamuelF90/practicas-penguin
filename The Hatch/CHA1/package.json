@@ -1,0 +1,12 @@
+{
+  "name": "panel-control",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.21.0",
+    "pug": "^3.0.3"
+  }
+}

@@ -1,0 +1,78 @@
+doctype html
+html
+  head
+    title Administración - Paula
+    style.
+      body { background: radial-gradient(circle at center, #1a3a5f 0%, #001524 100%) no-repeat center center fixed; color: #e0f7fa; font-family: sans-serif; padding: 20px; margin: 0; }
+      .container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 30px; border-radius: 25px; border: 1px solid #00d2ff; max-width: 1000px; margin: auto; box-shadow: 0 0 20px rgba(0,210,255,0.2); }
+      h1, h2 { color: #00d2ff; text-shadow: 0 0 10px #00d2ff; text-align: center; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(0,0,0,0.2); border-radius: 15px; overflow: hidden; margin-bottom: 40px; }
+      th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,210,255,0.1); }
+      th { background: rgba(0, 210, 255, 0.2); color: #00d2ff; text-transform: uppercase; font-size: 0.8em; }
+      .form-agregar { background: rgba(0, 210, 255, 0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; align-items: center; }
+      input { background: #001524; border: 1px solid #00d2ff; color: white; padding: 8px; border-radius: 5px; }
+      .btn-env { display: inline-block; color: #00e676; text-decoration: none; border: 1px solid #00e676; padding: 6px 12px; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+      .btn-del { color: #ff5252; text-decoration: none; border: 1px solid #ff5252; padding: 4px 8px; border-radius: 5px; font-size: 0.8em; }
+      .btn-add { background: #00d2ff; color: #001524; border: none; padding: 8px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+      .alert { background: #ff5252; color: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 20px; border: 1px solid white; }
+      .btn-tienda { color:#00e676; text-decoration:none; border: 1px solid #00e676; padding: 10px 20px; border-radius: 10px; font-weight: bold; transition: 0.3s; }
+      .btn-tienda:hover { background: #00e676; color: #000; }
+
+  body
+    .container
+      h1 🐧 PANEL DE CONTROL DE PAULA 🐧
+
+      //- Mensaje de Error por Duplicados
+      if error === 'duplicado'
+        .alert ⚠️ ¡Error! El pez que intentas agregar ya existe. Larry no quiere confusión.
+
+      //- SECCIÓN: AGREGAR / EDITAR PRODUCTO (CRUD - Create/Update)
+      h2= editando ? "✏️ EDITAR: " + editando.nombre : "🐟 AGREGAR NUEVO PRODUCTO"
+      form.form-agregar(action=`/productos/guardar?token=${token}` method="POST")
+        input(type="hidden" name="id" value=(editando ? editando._id : ""))
+        input(type="text" name="nombre" placeholder="Nombre" value=(editando ? editando.nombre : "") required)
+        input(type="number" name="precio" placeholder="Precio $" value=(editando ? editando.precio : "") required)
+        input(type="text" name="link_imagenes" placeholder="Link de Imagen" value=(editando ? editando.imagen : ""))
+        button.btn-add(type="submit")= editando ? "💾 ACTUALIZAR" : "+ GUARDAR EN MONGO"
+        if editando
+          a(href=`/escritorio?token=${token}` style="color: #ccc; margin-left: 10px; font-size: 0.8em;") Cancelar
+
+      h2 🧊 INVENTARIO ACTUAL 🧊
+      table
+        thead
+          tr
+            th Producto
+            th Precio
+            th Acción
+        tbody
+          each prod in productos
+            tr
+             
+              td= prod.nombre
+              td= prod.precio + " $"
+              td.accion-td
+                a.btn-env(href=`/escritorio?token=${token}&editarId=${prod._id}` style="margin-right: 8px") ✏️ Editar
+                a.btn-del(href=`/productos/borrar/${prod._id}?token=${token}`) 🗑 Eliminar
+
+      h2 📦 PEDIDOS DE LOS PINGÜINOS 🐧
+      table
+        thead
+          tr
+            th Detalle
+            th Iglú Destino
+            th Total
+            th Acción
+        tbody
+          if pedidos && pedidos.length > 0
+            each ped in pedidos
+              tr
+                td(style="font-weight:bold;")= ped.producto
+                td= "📍 " + (ped.iglu || "No especificado")
+                td(style="color:#00d2ff;")= ped.total + " $"
+                td.accion-td: a.btn-env(href=`/enviar_pedido/${ped._id}?token=${token}`) 🚀 Marcar Enviado
+          else
+            tr: td(colspan="4" style="text-align:center; padding:40px; opacity:0.5") No hay pedidos pendientes.
+
+      //- LINKS DE NAVEGACIÓN
+      div(style="text-align:center; margin-top:40px; display: flex; justify-content: center; gap: 20px;")
+        a(href="/login" style="color:#ff5252; text-decoration:none; border: 1px solid #ff5252; padding: 10px 20px; border-radius: 10px; font-weight: bold;") 🚪 CERRAR SESIÓN
